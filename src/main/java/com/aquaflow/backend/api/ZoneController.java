@@ -6,7 +6,6 @@ import com.aquaflow.backend.dto.request.UpdateCropStageRequest;
 import com.aquaflow.backend.dto.request.ZoneRequest;
 import com.aquaflow.backend.dto.response.MonitoringZoneResponse;
 import com.aquaflow.backend.dto.response.ZoneResponse;
-import com.aquaflow.backend.domain.ZoneService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +30,6 @@ public class ZoneController {
     }
 
     @PostMapping
-    public ResponseEntity<ZoneResponse> createZone(@RequestBody ZoneRequest request) {
     public ResponseEntity<ZoneResponse> createZone(@Valid @RequestBody ZoneRequest request) {
         log.info("POST /api/v1/zones");
         ZoneResponse response = zoneService.createZone(request);
@@ -56,16 +54,13 @@ public class ZoneController {
         return ResponseEntity.ok(zoneService.getAllZones(pageable));
     }
 
-    @GetMapping
     @GetMapping("/all")
     public ResponseEntity<List<ZoneResponse>> getAllZonesList() {
-        log.info("GET /api/v1/zones (all)");
         log.info("GET /api/v1/zones/all");
         return ResponseEntity.ok(zoneService.getAllZones());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ZoneResponse> updateZone(@PathVariable Long id, @RequestBody ZoneRequest request) {
     public ResponseEntity<ZoneResponse> updateZone(@PathVariable Long id, @Valid @RequestBody ZoneRequest request) {
         log.info("PUT /api/v1/zones/{}", id);
         return ResponseEntity.ok(zoneService.updateZone(id, request));

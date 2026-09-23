@@ -6,9 +6,8 @@ import com.aquaflow.backend.entity.SensorReading;
 import com.aquaflow.backend.entity.SensorType;
 import com.aquaflow.backend.infrastructure.exception.ResourceNotFoundException;
 import com.aquaflow.backend.infrastructure.exception.ValidationException;
-import com.aquaflow.backend.persistence.SensorReadingRepository;
-import com.aquaflow.backend.domain.SensorDataService;
 import com.aquaflow.backend.infrastructure.util.DtoMapper;
+import com.aquaflow.backend.persistence.SensorReadingRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -40,10 +39,18 @@ public class SensorDataServiceImpl implements SensorDataService {
             throw new ValidationException("Sensor value must not be null", "SENSOR_VALUE_NULL");
         }
 
+        SensorType parsedType = SensorType.SOIL_MOISTURE;
+        if (request.getSensorType() != null) {
+            try {
+                parsedType = SensorType.valueOf(request.getSensorType().toUpperCase());
+            } catch (IllegalArgumentException e) {
+                log.warn("Unknown sensor type: {}, defaulting to SOIL_MOISTURE", request.getSensorType());
+            }
+        }
+
         SensorReading reading = SensorReading.builder()
                 .deviceId(request.getDeviceId())
-                .sensorType(request.getSensorType())
-                .sensorType(request.getSensorType() != null ? SensorType.valueOf(request.getSensorType()) : SensorType.SOIL_MOISTURE)
+                .sensorType(parsedType)
                 .value(request.getValue())
                 .unit(request.getUnit())
                 .timestamp(LocalDateTime.now())

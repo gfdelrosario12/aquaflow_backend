@@ -15,6 +15,8 @@ public interface TelemetryReadingRepository extends JpaRepository<TelemetryReadi
     List<TelemetryReading> findByMonitoringPointId(Long monitoringPointId);
     Page<TelemetryReading> findByMonitoringPointId(Long monitoringPointId, Pageable pageable);
     Page<TelemetryReading> findByMonitoringPointIdAndTimestampBetween(Long monitoringPointId, LocalDateTime from, LocalDateTime to, Pageable pageable);
+    Page<TelemetryReading> findByEdgeNodeId(Long edgeNodeId, Pageable pageable);
+    List<TelemetryReading> findByEdgeNodeIdOrderByTimestampDesc(Long edgeNodeId);
     Page<TelemetryReading> findByEdgeNodeIdAndTimestampBetween(Long edgeNodeId, LocalDateTime from, LocalDateTime to, Pageable pageable);
     List<TelemetryReading> findByMonitoringPointIdAndSensorTypeOrderByTimestampDesc(Long monitoringPointId, SensorType sensorType);
 }

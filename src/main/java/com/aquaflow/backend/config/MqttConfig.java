@@ -1,5 +1,6 @@
 package com.aquaflow.backend.config;
 
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.channel.DirectChannel;
@@ -8,7 +9,6 @@ import org.springframework.integration.mqtt.core.MqttPahoClientFactory;
 import org.springframework.integration.mqtt.inbound.MqttPahoMessageDrivenChannelAdapter;
 import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.MessageHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,10 +22,7 @@ public class MqttConfig {
     @Bean
     public MqttPahoClientFactory mqttClientFactory() {
         DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
-        factory.setServerURIs(MQTT_BROKER_URL);
-        factory.setUserName("");
-        factory.setPassword("");
-        org.eclipse.paho.client.mqttv3.MqttConnectOptions options = new org.eclipse.paho.client.mqttv3.MqttConnectOptions();
+        MqttConnectOptions options = new MqttConnectOptions();
         options.setServerURIs(new String[] { MQTT_BROKER_URL });
         options.setUserName("");
         options.setPassword("".toCharArray());
@@ -55,10 +52,7 @@ public class MqttConfig {
     @Bean
     public MqttPahoMessageHandler mqttOutboundHandler(MqttPahoClientFactory clientFactory) {
         MqttPahoMessageHandler handler = new MqttPahoMessageHandler(CLIENT_ID + "-out", clientFactory);
-        handler.setOutputChannel(mqttOutputChannel());
         handler.setDefaultTopic("actuator/command");
-        handler.setQos(1);
-        handler.setRetainExpression("false");
         handler.setDefaultQos(1);
         handler.setDefaultRetained(false);
         return handler;

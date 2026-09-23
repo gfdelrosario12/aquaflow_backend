@@ -2,6 +2,7 @@
 
 ## Purpose
 TBD - created by archiving change backend-architecture-baseline. Update Purpose after archive.
+
 ## Requirements
 ### Requirement: System SHALL manage irrigation zones
 The system SHALL define irrigation zones with configurable parameters including name, area, crop type, and water allocation limits.
@@ -59,3 +60,9 @@ The system SHALL enforce assignment integrity prohibiting `MonitoringPoint` enti
 - **WHEN** client creates a `MonitoringPoint` referencing an `EdgeNode` that belongs to a different `MonitoringZone` or `Field`
 - **THEN** system throws a `ValidationException` with error code `INVALID_TOPOLOGY_ASSIGNMENT` and rejects the operation
 
+### Requirement: System SHALL enforce node lifecycle operational invariants
+The system SHALL prohibit `EdgeNode` entities in `UNREGISTERED`, `DECOMMISSIONED`, or `REPLACED` states from ingesting telemetry readings or executing autonomous irrigation schedule synchronization.
+
+#### Scenario: Reject telemetry ingestion from decommissioned node
+- **WHEN** a decommissioned or unregistered edge node attempts to submit sensor telemetry or request irrigation schedule sync
+- **THEN** system throws a `ValidationException` with error code `NODE_NOT_ACTIVE` and rejects the operation

@@ -12,8 +12,6 @@ import com.aquaflow.backend.infrastructure.exception.ValidationException;
 import com.aquaflow.backend.infrastructure.util.DtoMapper;
 import com.aquaflow.backend.persistence.MonitoringZoneRepository;
 import com.aquaflow.backend.persistence.ZoneRepository;
-import com.aquaflow.backend.domain.ZoneService;
-import com.aquaflow.backend.infrastructure.util.DtoMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -33,7 +31,6 @@ public class ZoneServiceImpl implements ZoneService {
     private final ZoneRepository zoneRepository;
     private final MonitoringZoneRepository monitoringZoneRepository;
 
-    public ZoneServiceImpl(ZoneRepository zoneRepository) {
     public ZoneServiceImpl(ZoneRepository zoneRepository, MonitoringZoneRepository monitoringZoneRepository) {
         this.zoneRepository = zoneRepository;
         this.monitoringZoneRepository = monitoringZoneRepository;
