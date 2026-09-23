@@ -1,10 +1,16 @@
 package com.aquaflow.backend.domain;
 
+import com.aquaflow.backend.dto.request.UpdateAwdProfileRequest;
+import com.aquaflow.backend.dto.request.UpdateCropStageRequest;
 import com.aquaflow.backend.dto.request.ZoneRequest;
+import com.aquaflow.backend.dto.response.MonitoringZoneResponse;
 import com.aquaflow.backend.dto.response.ZoneResponse;
+import com.aquaflow.backend.entity.MonitoringZone;
 import com.aquaflow.backend.entity.Zone;
 import com.aquaflow.backend.infrastructure.exception.ResourceNotFoundException;
 import com.aquaflow.backend.infrastructure.exception.ValidationException;
+import com.aquaflow.backend.infrastructure.util.DtoMapper;
+import com.aquaflow.backend.persistence.MonitoringZoneRepository;
 import com.aquaflow.backend.persistence.ZoneRepository;
 import com.aquaflow.backend.domain.ZoneService;
 import com.aquaflow.backend.infrastructure.util.DtoMapper;
@@ -25,9 +31,12 @@ public class ZoneServiceImpl implements ZoneService {
     private static final Logger log = LoggerFactory.getLogger(ZoneServiceImpl.class);
 
     private final ZoneRepository zoneRepository;
+    private final MonitoringZoneRepository monitoringZoneRepository;
 
     public ZoneServiceImpl(ZoneRepository zoneRepository) {
+    public ZoneServiceImpl(ZoneRepository zoneRepository, MonitoringZoneRepository monitoringZoneRepository) {
         this.zoneRepository = zoneRepository;
+        this.monitoringZoneRepository = monitoringZoneRepository;
     }
 
     @Override
@@ -60,6 +69,14 @@ public class ZoneServiceImpl implements ZoneService {
 
     @Override
     @Transactional(readOnly = true)
+    public MonitoringZoneResponse getMonitoringZoneById(Long id) {
+        MonitoringZone zone = monitoringZoneRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Monitoring zone not found with id: " + id));
+        return DtoMapper.toMonitoringZoneResponse(zone);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Page<ZoneResponse> getAllZones(Pageable pageable) {
         return zoneRepository.findAll(pageable).map(DtoMapper::toZoneResponse);
     }
@@ -84,6 +101,32 @@ public class ZoneServiceImpl implements ZoneService {
         Zone saved = zoneRepository.save(zone);
         log.info("Zone updated with id: {}", id);
         return DtoMapper.toZoneResponse(saved);
+    }
+
+    @Override
+    public MonitoringZoneResponse updateCropStage(Long id, UpdateCropStageRequest request) {
+        log.info("Updating crop stage for zone {}: {}", id, request.getGrowthStage());
+
+        MonitoringZone zone = monitoringZoneRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Monitoring zone not found with id: " + id));
+
+        zone.setCropType(request.getGrowthStage());
+
+        MonitoringZone saved = monitoringZoneRepository.save(zone);
+        return DtoMapper.toMonitoringZoneResponse(saved);
+    }
+
+    @Override
+    public MonitoringZoneResponse updateAwdProfile(Long id, UpdateAwdProfileRequest request) {
+        log.info("Updating AWD profile for zone {}: moisture target {}%", id, request.getTargetMoisturePercentage());
+
+        MonitoringZone zone = monitoringZoneRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Monitoring zone not found with id: " + id));
+
+        zone.setTargetMoisturePercentage(request.getTargetMoisturePercentage());
+
+        MonitoringZone saved = monitoringZoneRepository.save(zone);
+        return DtoMapper.toMonitoringZoneResponse(saved);
     }
 
     @Override

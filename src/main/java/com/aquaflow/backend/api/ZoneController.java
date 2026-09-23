@@ -1,8 +1,13 @@
 package com.aquaflow.backend.api;
 
+import com.aquaflow.backend.domain.ZoneService;
+import com.aquaflow.backend.dto.request.UpdateAwdProfileRequest;
+import com.aquaflow.backend.dto.request.UpdateCropStageRequest;
 import com.aquaflow.backend.dto.request.ZoneRequest;
+import com.aquaflow.backend.dto.response.MonitoringZoneResponse;
 import com.aquaflow.backend.dto.response.ZoneResponse;
 import com.aquaflow.backend.domain.ZoneService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -27,6 +32,7 @@ public class ZoneController {
 
     @PostMapping
     public ResponseEntity<ZoneResponse> createZone(@RequestBody ZoneRequest request) {
+    public ResponseEntity<ZoneResponse> createZone(@Valid @RequestBody ZoneRequest request) {
         log.info("POST /api/v1/zones");
         ZoneResponse response = zoneService.createZone(request);
         return ResponseEntity.created(URI.create("/api/v1/zones/" + response.getId())).body(response);
@@ -38,6 +44,12 @@ public class ZoneController {
         return ResponseEntity.ok(zoneService.getZoneById(id));
     }
 
+    @GetMapping("/monitoring/{id}")
+    public ResponseEntity<MonitoringZoneResponse> getMonitoringZoneById(@PathVariable Long id) {
+        log.info("GET /api/v1/zones/monitoring/{}", id);
+        return ResponseEntity.ok(zoneService.getMonitoringZoneById(id));
+    }
+
     @GetMapping
     public ResponseEntity<Page<ZoneResponse>> getAllZones(Pageable pageable) {
         log.info("GET /api/v1/zones");
@@ -45,15 +57,30 @@ public class ZoneController {
     }
 
     @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<ZoneResponse>> getAllZonesList() {
         log.info("GET /api/v1/zones (all)");
+        log.info("GET /api/v1/zones/all");
         return ResponseEntity.ok(zoneService.getAllZones());
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ZoneResponse> updateZone(@PathVariable Long id, @RequestBody ZoneRequest request) {
+    public ResponseEntity<ZoneResponse> updateZone(@PathVariable Long id, @Valid @RequestBody ZoneRequest request) {
         log.info("PUT /api/v1/zones/{}", id);
         return ResponseEntity.ok(zoneService.updateZone(id, request));
+    }
+
+    @PutMapping("/{id}/crop-stage")
+    public ResponseEntity<MonitoringZoneResponse> updateCropStage(@PathVariable Long id, @Valid @RequestBody UpdateCropStageRequest request) {
+        log.info("PUT /api/v1/zones/{}/crop-stage", id);
+        return ResponseEntity.ok(zoneService.updateCropStage(id, request));
+    }
+
+    @PutMapping("/{id}/awd-profile")
+    public ResponseEntity<MonitoringZoneResponse> updateAwdProfile(@PathVariable Long id, @Valid @RequestBody UpdateAwdProfileRequest request) {
+        log.info("PUT /api/v1/zones/{}/awd-profile", id);
+        return ResponseEntity.ok(zoneService.updateAwdProfile(id, request));
     }
 
     @DeleteMapping("/{id}")

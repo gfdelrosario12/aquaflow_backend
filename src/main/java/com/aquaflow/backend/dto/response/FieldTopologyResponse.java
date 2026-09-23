@@ -6,18 +6,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FieldResponse {
+public class FieldTopologyResponse {
     private Long id;
     private String name;
     private String boundaryGeoJson;
     private Double areaHectares;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    @Builder.Default
+    private List<MonitoringZoneTopologyResponse> zones = new ArrayList<>();
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -31,5 +36,7 @@ public class FieldResponse {
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public List<MonitoringZoneTopologyResponse> getZones() { return zones; }
+    public void setZones(List<MonitoringZoneTopologyResponse> zones) { this.zones = zones; }
 }
 

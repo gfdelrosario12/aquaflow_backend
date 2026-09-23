@@ -1,35 +1,31 @@
-package com.aquaflow.backend.dto.response;
+package com.aquaflow.backend.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FieldResponse {
-    private Long id;
-    private String name;
-    private String boundaryGeoJson;
-    private Double areaHectares;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+public class FieldRequest {
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    @NotBlank(message = "Field name must not be blank")
+    private String name;
+
+    private String boundaryGeoJson;
+
+    @Positive(message = "Area must be positive")
+    private Double areaHectares;
+
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public String getBoundaryGeoJson() { return boundaryGeoJson; }
     public void setBoundaryGeoJson(String boundaryGeoJson) { this.boundaryGeoJson = boundaryGeoJson; }
     public Double getAreaHectares() { return areaHectares; }
     public void setAreaHectares(Double areaHectares) { this.areaHectares = areaHectares; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }
 

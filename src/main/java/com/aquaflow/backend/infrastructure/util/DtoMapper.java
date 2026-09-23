@@ -124,6 +124,38 @@ public class DtoMapper {
                 .build();
     }
 
+    public static MonitoringZoneTopologyResponse toMonitoringZoneTopologyResponse(MonitoringZone zone, java.util.List<MonitoringPoint> points, java.util.List<EdgeNode> nodes) {
+        if (zone == null) return null;
+        java.util.List<MonitoringPointResponse> pointResponses = points != null ? points.stream().map(DtoMapper::toMonitoringPointResponse).collect(java.util.stream.Collectors.toList()) : java.util.Collections.emptyList();
+        java.util.List<EdgeNodeResponse> nodeResponses = nodes != null ? nodes.stream().map(DtoMapper::toEdgeNodeResponse).collect(java.util.stream.Collectors.toList()) : java.util.Collections.emptyList();
+
+        return MonitoringZoneTopologyResponse.builder()
+                .id(zone.getId())
+                .name(zone.getName())
+                .fieldId(zone.getField() != null ? zone.getField().getId() : null)
+                .cropType(zone.getCropType())
+                .targetMoisturePercentage(zone.getTargetMoisturePercentage())
+                .waterAllocationLimitLiters(zone.getWaterAllocationLimitLiters())
+                .createdAt(zone.getCreatedAt())
+                .updatedAt(zone.getUpdatedAt())
+                .monitoringPoints(pointResponses)
+                .assignedNodes(nodeResponses)
+                .build();
+    }
+
+    public static FieldTopologyResponse toFieldTopologyResponse(Field field, java.util.List<MonitoringZoneTopologyResponse> zoneTopologies) {
+        if (field == null) return null;
+        return FieldTopologyResponse.builder()
+                .id(field.getId())
+                .name(field.getName())
+                .boundaryGeoJson(field.getBoundaryGeoJson())
+                .areaHectares(field.getAreaHectares())
+                .createdAt(field.getCreatedAt())
+                .updatedAt(field.getUpdatedAt())
+                .zones(zoneTopologies != null ? zoneTopologies : java.util.Collections.emptyList())
+                .build();
+    }
+
     public static EdgeNodeResponse toEdgeNodeResponse(EdgeNode node) {
         if (node == null) return null;
         return EdgeNodeResponse.builder()
