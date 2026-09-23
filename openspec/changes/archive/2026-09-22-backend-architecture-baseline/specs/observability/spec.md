@@ -1,0 +1,40 @@
+## Purpose
+
+Provide system observability including health checks, metrics, API documentation, and structured logging for the autonomous irrigation backend.
+
+## ADDED Requirements
+
+### Requirement: System SHALL expose health check endpoints
+The system SHALL expose Spring Boot Actuator health endpoint at `/actuator/health` showing application and dependency status.
+
+#### Scenario: Application health check
+- **WHEN** monitoring system queries `/actuator/health`
+- **THEN** system returns status (UP/DOWN) for application and each dependency
+
+### Requirement: System SHALL expose Prometheus metrics
+The system SHALL expose metrics at `/actuator/prometheus` for monitoring system performance and resource usage.
+
+#### Scenario: Collect JVM metrics
+- **WHEN** Prometheus scrapes `/actuator/prometheus`
+- **THEN** system returns JVM memory, thread, GC, and HTTP request metrics
+
+### Requirement: System SHALL serve OpenAPI documentation
+The system SHALL generate and serve OpenAPI 3.0 documentation at `/api/v1/swagger-ui.html` or equivalent path.
+
+#### Scenario: Access API documentation
+- **WHEN** developer navigates to swagger UI URL
+- **THEN** system renders interactive API documentation with all endpoints and schemas
+
+### Requirement: System SHALL use structured logging
+The system SHALL output logs in structured JSON format with timestamp, level, logger, message, and context fields.
+
+#### Scenario: Structured log output
+- **WHEN** application processes a request
+- **THEN** log entry includes request path, method, response time, and correlation ID
+
+### Requirement: System SHALL configure per-profile logging levels
+The system SHALL set logging levels per profile (DEBUG for dev, WARN/ERROR for prod).
+
+#### Scenario: Production logging
+- **WHEN** application runs with `prod` profile
+- **THEN** system logs at WARN or ERROR level only

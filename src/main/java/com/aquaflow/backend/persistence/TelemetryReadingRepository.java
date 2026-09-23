@@ -1,0 +1,21 @@
+package com.aquaflow.backend.persistence;
+
+import com.aquaflow.backend.entity.SensorType;
+import com.aquaflow.backend.entity.TelemetryReading;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Repository
+public interface TelemetryReadingRepository extends JpaRepository<TelemetryReading, Long> {
+    List<TelemetryReading> findByMonitoringPointId(Long monitoringPointId);
+    Page<TelemetryReading> findByMonitoringPointId(Long monitoringPointId, Pageable pageable);
+    Page<TelemetryReading> findByMonitoringPointIdAndTimestampBetween(Long monitoringPointId, LocalDateTime from, LocalDateTime to, Pageable pageable);
+    Page<TelemetryReading> findByEdgeNodeIdAndTimestampBetween(Long edgeNodeId, LocalDateTime from, LocalDateTime to, Pageable pageable);
+    List<TelemetryReading> findByMonitoringPointIdAndSensorTypeOrderByTimestampDesc(Long monitoringPointId, SensorType sensorType);
+}
+

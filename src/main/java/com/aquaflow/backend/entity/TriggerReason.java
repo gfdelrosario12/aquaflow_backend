@@ -1,0 +1,11 @@
+package com.aquaflow.backend.entity;
+
+public enum TriggerReason {
+    SOIL_MOISTURE_BELOW_MIN,
+    SOIL_MOISTURE_ABOVE_MAX,
+    SCHEDULED_TIME_REACHED,
+    RAIN_SENSOR_ACTIVE,
+    HIGH_TEMPERATURE_OVERRIDE,
+    OPERATOR_COMMAND
+}
+
