@@ -2,6 +2,7 @@ package com.aquaflow.backend.domain;
 
 import com.aquaflow.backend.dto.response.FieldTopologyResponse;
 import com.aquaflow.backend.dto.response.MonitoringZoneTopologyResponse;
+import com.aquaflow.backend.entity.AutoIrrigationConfig;
 import com.aquaflow.backend.entity.EdgeNode;
 import com.aquaflow.backend.entity.Field;
 import com.aquaflow.backend.entity.MonitoringPoint;
@@ -9,6 +10,7 @@ import com.aquaflow.backend.entity.MonitoringZone;
 import com.aquaflow.backend.infrastructure.exception.ResourceNotFoundException;
 import com.aquaflow.backend.infrastructure.exception.ValidationException;
 import com.aquaflow.backend.infrastructure.util.DtoMapper;
+import com.aquaflow.backend.persistence.AutoIrrigationConfigRepository;
 import com.aquaflow.backend.persistence.EdgeNodeRepository;
 import com.aquaflow.backend.persistence.FieldRepository;
 import com.aquaflow.backend.persistence.MonitoringPointRepository;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -32,17 +35,28 @@ public class FieldTopologyServiceImpl implements FieldTopologyService {
     private final MonitoringPointRepository monitoringPointRepository;
     private final EdgeNodeRepository edgeNodeRepository;
     private final ZoneAggregationService zoneAggregationService;
+    private final AutoIrrigationConfigRepository autoIrrigationConfigRepository;
+
+    public FieldTopologyServiceImpl(FieldRepository fieldRepository,
+                                    MonitoringZoneRepository monitoringZoneRepository,
+                                    MonitoringPointRepository monitoringPointRepository,
+                                    EdgeNodeRepository edgeNodeRepository,
+                                    ZoneAggregationService zoneAggregationService,
+                                    AutoIrrigationConfigRepository autoIrrigationConfigRepository) {
+        this.fieldRepository = fieldRepository;
+        this.monitoringZoneRepository = monitoringZoneRepository;
+        this.monitoringPointRepository = monitoringPointRepository;
+        this.edgeNodeRepository = edgeNodeRepository;
+        this.zoneAggregationService = zoneAggregationService;
+        this.autoIrrigationConfigRepository = autoIrrigationConfigRepository;
+    }
 
     public FieldTopologyServiceImpl(FieldRepository fieldRepository,
                                     MonitoringZoneRepository monitoringZoneRepository,
                                     MonitoringPointRepository monitoringPointRepository,
                                     EdgeNodeRepository edgeNodeRepository,
                                     ZoneAggregationService zoneAggregationService) {
-        this.fieldRepository = fieldRepository;
-        this.monitoringZoneRepository = monitoringZoneRepository;
-        this.monitoringPointRepository = monitoringPointRepository;
-        this.edgeNodeRepository = edgeNodeRepository;
-        this.zoneAggregationService = zoneAggregationService;
+        this(fieldRepository, monitoringZoneRepository, monitoringPointRepository, edgeNodeRepository, zoneAggregationService, null);
     }
 
     @Override
@@ -70,7 +84,14 @@ public class FieldTopologyServiceImpl implements FieldTopologyService {
             zoneTopologies.add(zoneTopology);
         }
 
-        return DtoMapper.toFieldTopologyResponse(field, zoneTopologies);
+        FieldTopologyResponse response = DtoMapper.toFieldTopologyResponse(field, zoneTopologies);
+
+        if (autoIrrigationConfigRepository != null) {
+            Optional<AutoIrrigationConfig> configOpt = autoIrrigationConfigRepository.findByFieldId(fieldId);
+            configOpt.ifPresent(config -> response.setActiveConfigVersion(config.getConfigVersion()));
+        }
+
+        return response;
     }
 
     @Override
@@ -115,4 +136,3 @@ public class FieldTopologyServiceImpl implements FieldTopologyService {
         }
     }
 }
-

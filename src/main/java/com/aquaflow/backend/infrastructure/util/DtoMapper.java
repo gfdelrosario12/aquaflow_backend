@@ -225,11 +225,41 @@ public class DtoMapper {
                 .build();
     }
 
+    public static AwdThresholdConfigResponse toAwdThresholdConfigResponse(AwdThresholdConfig config) {
+        if (config == null) return null;
+        return AwdThresholdConfigResponse.builder()
+                .id(config.getId())
+                .growthStage(config.getGrowthStage())
+                .triggerMoisturePercentage(config.getTriggerMoisturePercentage())
+                .targetMoisturePercentage(config.getTargetMoisturePercentage())
+                .targetFloodDepthCm(config.getTargetFloodDepthCm())
+                .createdAt(config.getCreatedAt())
+                .updatedAt(config.getUpdatedAt())
+                .build();
+    }
+
     public static AutoIrrigationConfigResponse toAutoIrrigationConfigResponse(AutoIrrigationConfig config) {
         if (config == null) return null;
+        java.util.List<AwdThresholdConfigResponse> thresholds = config.getThresholds() != null
+                ? config.getThresholds().stream().map(DtoMapper::toAwdThresholdConfigResponse).toList()
+                : java.util.Collections.emptyList();
+
         return AutoIrrigationConfigResponse.builder()
                 .id(config.getId())
+                .fieldId(config.getField() != null ? config.getField().getId() : null)
                 .edgeNodeId(config.getEdgeNode() != null ? config.getEdgeNode().getId() : null)
+                .enabled(config.getEnabled())
+                .maxDurationMinutes(config.getMaxDurationMinutes())
+                .minCooldownMinutes(config.getMinCooldownMinutes())
+                .allowedStartHour(config.getAllowedStartHour())
+                .allowedEndHour(config.getAllowedEndHour())
+                .targetFloodDepthCm(config.getTargetFloodDepthCm())
+                .rainDelayHours(config.getRainDelayHours())
+                .minConfidenceThreshold(config.getMinConfidenceThreshold())
+                .configVersion(config.getConfigVersion())
+                .updatedBy(config.getUpdatedBy())
+                .changeReason(config.getChangeReason())
+                .thresholds(thresholds)
                 .scheduleMode(config.getScheduleMode())
                 .minSoilMoisturePercentage(config.getMinSoilMoisturePercentage())
                 .maxSoilMoisturePercentage(config.getMaxSoilMoisturePercentage())

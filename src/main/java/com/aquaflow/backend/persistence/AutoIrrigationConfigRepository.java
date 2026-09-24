@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface AutoIrrigationConfigRepository extends JpaRepository<AutoIrrigationConfig, Long> {
+    Optional<AutoIrrigationConfig> findByFieldId(Long fieldId);
     Optional<AutoIrrigationConfig> findByEdgeNodeId(Long edgeNodeId);
 }
-

@@ -2,12 +2,14 @@ package com.aquaflow.backend.service;
 
 import com.aquaflow.backend.domain.FieldTopologyServiceImpl;
 import com.aquaflow.backend.dto.response.FieldTopologyResponse;
+import com.aquaflow.backend.entity.AutoIrrigationConfig;
 import com.aquaflow.backend.entity.EdgeNode;
 import com.aquaflow.backend.entity.Field;
 import com.aquaflow.backend.entity.MonitoringPoint;
 import com.aquaflow.backend.entity.MonitoringZone;
 import com.aquaflow.backend.infrastructure.exception.ResourceNotFoundException;
 import com.aquaflow.backend.infrastructure.exception.ValidationException;
+import com.aquaflow.backend.persistence.AutoIrrigationConfigRepository;
 import com.aquaflow.backend.persistence.EdgeNodeRepository;
 import com.aquaflow.backend.persistence.FieldRepository;
 import com.aquaflow.backend.persistence.MonitoringPointRepository;
@@ -41,6 +43,9 @@ class FieldTopologyServiceTest {
     @Mock
     private com.aquaflow.backend.domain.ZoneAggregationService zoneAggregationService;
 
+    @Mock
+    private AutoIrrigationConfigRepository autoIrrigationConfigRepository;
+
     private FieldTopologyServiceImpl topologyService;
 
     @BeforeEach
@@ -51,7 +56,8 @@ class FieldTopologyServiceTest {
                 monitoringZoneRepository,
                 monitoringPointRepository,
                 edgeNodeRepository,
-                zoneAggregationService
+                zoneAggregationService,
+                autoIrrigationConfigRepository
         );
     }
 
@@ -61,16 +67,19 @@ class FieldTopologyServiceTest {
         MonitoringZone zone = MonitoringZone.builder().id(2L).name("Zone A").field(field).cropType("RICE").build();
         MonitoringPoint point = MonitoringPoint.builder().id(3L).name("Point 1").monitoringZone(zone).build();
         EdgeNode node = EdgeNode.builder().id(4L).nodeId("NODE-01").monitoringZone(zone).build();
+        AutoIrrigationConfig config = AutoIrrigationConfig.builder().id(10L).field(field).configVersion(5L).build();
 
         when(fieldRepository.findById(1L)).thenReturn(Optional.of(field));
         when(monitoringZoneRepository.findByFieldId(1L)).thenReturn(List.of(zone));
         when(monitoringPointRepository.findByMonitoringZoneId(2L)).thenReturn(List.of(point));
         when(edgeNodeRepository.findByMonitoringZoneId(2L)).thenReturn(List.of(node));
+        when(autoIrrigationConfigRepository.findByFieldId(1L)).thenReturn(Optional.of(config));
 
         FieldTopologyResponse topology = topologyService.getFieldTopology(1L);
 
         assertThat(topology).isNotNull();
         assertThat(topology.getId()).isEqualTo(1L);
+        assertThat(topology.getActiveConfigVersion()).isEqualTo(5L);
         assertThat(topology.getZones()).hasSize(1);
         assertThat(topology.getZones().get(0).getMonitoringPoints()).hasSize(1);
         assertThat(topology.getZones().get(0).getAssignedNodes()).hasSize(1);
@@ -99,4 +108,3 @@ class FieldTopologyServiceTest {
                 .hasMessageContaining("already assigned to a different monitoring zone");
     }
 }
-

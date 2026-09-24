@@ -18,6 +18,7 @@ public class FieldTopologyResponse {
     private String name;
     private String boundaryGeoJson;
     private Double areaHectares;
+    private Long activeConfigVersion;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -32,6 +33,8 @@ public class FieldTopologyResponse {
     public void setBoundaryGeoJson(String boundaryGeoJson) { this.boundaryGeoJson = boundaryGeoJson; }
     public Double getAreaHectares() { return areaHectares; }
     public void setAreaHectares(Double areaHectares) { this.areaHectares = areaHectares; }
+    public Long getActiveConfigVersion() { return activeConfigVersion; }
+    public void setActiveConfigVersion(Long activeConfigVersion) { this.activeConfigVersion = activeConfigVersion; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
@@ -39,4 +42,3 @@ public class FieldTopologyResponse {
     public List<MonitoringZoneTopologyResponse> getZones() { return zones; }
     public void setZones(List<MonitoringZoneTopologyResponse> zones) { this.zones = zones; }
 }
-
