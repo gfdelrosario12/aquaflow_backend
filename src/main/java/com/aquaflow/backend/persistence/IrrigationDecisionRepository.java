@@ -16,5 +16,8 @@ public interface IrrigationDecisionRepository extends JpaRepository<IrrigationDe
     Page<IrrigationDecision> findByEdgeNodeId(Long edgeNodeId, Pageable pageable);
     Page<IrrigationDecision> findByEdgeNodeIdAndNodeTimestampBetween(Long edgeNodeId, LocalDateTime from, LocalDateTime to, Pageable pageable);
     List<IrrigationDecision> findByDecisionType(DecisionType decisionType);
+    Page<IrrigationDecision> findByExecutionStatus(String executionStatus, Pageable pageable);
+    List<IrrigationDecision> findByEdgeNodeIdIn(List<Long> edgeNodeIds);
+    List<IrrigationDecision> findTop10ByEdgeNodeIdInOrderByNodeTimestampDesc(List<Long> edgeNodeIds);
+    List<IrrigationDecision> findByEdgeNodeIdInAndNodeTimestampAfter(List<Long> edgeNodeIds, LocalDateTime after);
 }
-

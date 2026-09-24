@@ -1,7 +1,7 @@
 # irrigation-api Specification
 
 ## Purpose
-TBD - created by archiving change backend-architecture-baseline. Update Purpose after archive.
+Provides REST API endpoints for managing physical irrigation zones, edge devices, schedules, autonomous decision reporting, and active field status summaries.
 ## Requirements
 ### Requirement: System SHALL expose versioned REST endpoints
 All API endpoints SHALL be prefixed with `/api/v1/` to support future versioning.
@@ -59,3 +59,13 @@ All list endpoints SHALL return pagination information including total count, pa
 - **WHEN** client sends GET to list endpoint with pagination parameters
 - **THEN** system returns paginated results with metadata
 
+### Requirement: System SHALL expose endpoints for reporting and querying autonomous irrigation decisions
+The system SHALL expose REST endpoints under `/api/v1/irrigation/` to ingest edge-driven AWD decisions, query decision history, and inspect active field irrigation status.
+
+#### Scenario: Post new edge irrigation decision
+- **WHEN** client posts decision payload to `/api/v1/irrigation/decisions`
+- **THEN** system persists decision metadata and returns Created 201 response
+
+#### Scenario: Retrieve field active irrigation status
+- **WHEN** client requests GET `/api/v1/irrigation/field/{fieldId}/status`
+- **THEN** system returns active irrigation state and summary for the target field

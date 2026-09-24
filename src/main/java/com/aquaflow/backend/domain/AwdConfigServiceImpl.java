@@ -39,7 +39,6 @@ public class AwdConfigServiceImpl implements AwdConfigService {
     public AwdConfigServiceImpl(FieldRepository fieldRepository,
                                 AutoIrrigationConfigRepository autoIrrigationConfigRepository,
                                 AwdConfigValidator awdConfigValidator,
-                                SystemEventPublisher systemEventPublisher) {
                                 SystemEventPublisher systemEventPublisher,
                                 @Autowired(required = false) EdgeNodeSyncService edgeNodeSyncService) {
         this.fieldRepository = fieldRepository;

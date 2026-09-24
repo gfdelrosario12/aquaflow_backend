@@ -1,4 +1,4 @@
-package com.aquaflow.backend.dto.response;
+package com.aquaflow.backend.dto.request;
 
 import com.aquaflow.backend.entity.CropGrowthStage;
 import com.aquaflow.backend.entity.DecisionType;
@@ -14,8 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class IrrigationDecisionResponse {
-    private Long id;
+public class IrrigationDecisionRequest {
     private Long edgeNodeId;
     private String nodeId;
     private DecisionType decisionType;
@@ -36,5 +35,5 @@ public class IrrigationDecisionResponse {
     private Integer rssi;
     private Double snr;
     private LocalDateTime nodeTimestamp;
-    private LocalDateTime createdAt;
 }
+
