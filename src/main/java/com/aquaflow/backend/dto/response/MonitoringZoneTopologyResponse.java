@@ -30,6 +30,8 @@ public class MonitoringZoneTopologyResponse {
     @Builder.Default
     private List<EdgeNodeResponse> assignedNodes = new ArrayList<>();
 
+    private ZoneTelemetryResponse telemetrySummary;
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getName() { return name; }
@@ -52,5 +54,7 @@ public class MonitoringZoneTopologyResponse {
     public void setMonitoringPoints(List<MonitoringPointResponse> monitoringPoints) { this.monitoringPoints = monitoringPoints; }
     public List<EdgeNodeResponse> getAssignedNodes() { return assignedNodes; }
     public void setAssignedNodes(List<EdgeNodeResponse> assignedNodes) { this.assignedNodes = assignedNodes; }
+    public ZoneTelemetryResponse getTelemetrySummary() { return telemetrySummary; }
+    public void setTelemetrySummary(ZoneTelemetryResponse telemetrySummary) { this.telemetrySummary = telemetrySummary; }
 }
 

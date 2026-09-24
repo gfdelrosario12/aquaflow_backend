@@ -31,15 +31,19 @@ public class FieldTopologyServiceImpl implements FieldTopologyService {
     private final MonitoringZoneRepository monitoringZoneRepository;
     private final MonitoringPointRepository monitoringPointRepository;
     private final EdgeNodeRepository edgeNodeRepository;
+    private final ZoneAggregationService zoneAggregationService;
 
     public FieldTopologyServiceImpl(FieldRepository fieldRepository,
                                     MonitoringZoneRepository monitoringZoneRepository,
                                     MonitoringPointRepository monitoringPointRepository,
                                     EdgeNodeRepository edgeNodeRepository) {
+                                    EdgeNodeRepository edgeNodeRepository,
+                                    ZoneAggregationService zoneAggregationService) {
         this.fieldRepository = fieldRepository;
         this.monitoringZoneRepository = monitoringZoneRepository;
         this.monitoringPointRepository = monitoringPointRepository;
         this.edgeNodeRepository = edgeNodeRepository;
+        this.zoneAggregationService = zoneAggregationService;
     }
 
     @Override
@@ -57,6 +61,13 @@ public class FieldTopologyServiceImpl implements FieldTopologyService {
             List<EdgeNode> nodes = edgeNodeRepository.findByMonitoringZoneId(zone.getId());
 
             MonitoringZoneTopologyResponse zoneTopology = DtoMapper.toMonitoringZoneTopologyResponse(zone, points, nodes);
+            if (zoneAggregationService != null) {
+                try {
+                    zoneTopology.setTelemetrySummary(zoneAggregationService.getLatestZoneTelemetry(zone.getId()));
+                } catch (Exception e) {
+                    log.warn("Failed to fetch zone telemetry summary for zoneId {}: {}", zone.getId(), e.getMessage());
+                }
+            }
             zoneTopologies.add(zoneTopology);
         }
 

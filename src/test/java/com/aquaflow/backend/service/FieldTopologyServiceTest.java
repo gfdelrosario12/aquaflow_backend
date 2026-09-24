@@ -38,6 +38,9 @@ class FieldTopologyServiceTest {
     @Mock
     private EdgeNodeRepository edgeNodeRepository;
 
+    @Mock
+    private com.aquaflow.backend.domain.ZoneAggregationService zoneAggregationService;
+
     private FieldTopologyServiceImpl topologyService;
 
     @BeforeEach
@@ -48,6 +51,8 @@ class FieldTopologyServiceTest {
                 monitoringZoneRepository,
                 monitoringPointRepository,
                 edgeNodeRepository
+                edgeNodeRepository,
+                zoneAggregationService
         );
     }
 
