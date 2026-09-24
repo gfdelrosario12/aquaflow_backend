@@ -11,14 +11,16 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class IrrigationAuditLogResponse {
+public class SystemAuditLogResponse {
     private Long id;
     private String eventType;
     private String actor;
     private String entityType;
     private String entityId;
-    private String payloadJson;
     private String correlationId;
+    private String previousState;
+    private String resultingState;
+    private String payloadJson;
     private LocalDateTime createdAt;
 }
 

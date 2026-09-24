@@ -268,7 +268,40 @@ public class EdgeNodeRegistryServiceImpl implements EdgeNodeRegistryService {
                 .batteryLevel(metrics != null ? metrics.getBatteryLevel() : null)
                 .solarVoltage(metrics != null ? metrics.getSolarVoltage() : null)
                 .signalDbm(metrics != null ? metrics.getSignalDbm() : null)
+                .snr(metrics != null ? metrics.getSnr() : null)
+                .consecutiveFailures(metrics != null ? metrics.getConsecutiveFailures() : null)
+                .isTelemetryStale(metrics != null ? metrics.getIsTelemetryStale() : null)
+                .lastTelemetryAt(metrics != null ? metrics.getLastTelemetryAt() : null)
                 .lastHeartbeat(metrics != null ? metrics.getLastHeartbeat() : null)
+                .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public NodeHealthSummaryResponse getNodeHealthSummary() {
+        List<EdgeNode> nodes = edgeNodeRepository.findAll();
+        List<NodeHealthResponse> responses = nodes.stream()
+                .map(n -> getNodeHealth(n.getId()))
+                .toList();
+
+        int healthy = 0, degraded = 0, critical = 0, offline = 0, stale = 0;
+        for (NodeHealthResponse res : responses) {
+            if (res.getHealthState() == HealthState.HEALTHY) healthy++;
+            else if (res.getHealthState() == HealthState.DEGRADED) degraded++;
+            else if (res.getHealthState() == HealthState.CRITICAL) critical++;
+            else if (res.getHealthState() == HealthState.OFFLINE) offline++;
+
+            if (Boolean.TRUE.equals(res.getIsTelemetryStale())) stale++;
+        }
+
+        return NodeHealthSummaryResponse.builder()
+                .totalNodes(responses.size())
+                .healthyNodesCount(healthy)
+                .degradedNodesCount(degraded)
+                .criticalNodesCount(critical)
+                .offlineNodesCount(offline)
+                .staleTelemetryNodesCount(stale)
+                .nodes(responses)
                 .build();
     }
 

@@ -27,5 +27,17 @@ public class NodeHealthMetrics {
 
     @Column(name = "last_heartbeat")
     private LocalDateTime lastHeartbeat;
+
+    @Column(name = "snr")
+    private Double snr;
+
+    @Column(name = "consecutive_failures")
+    private Integer consecutiveFailures;
+
+    @Column(name = "is_telemetry_stale")
+    private Boolean isTelemetryStale;
+
+    @Column(name = "last_telemetry_at")
+    private LocalDateTime lastTelemetryAt;
 }
 

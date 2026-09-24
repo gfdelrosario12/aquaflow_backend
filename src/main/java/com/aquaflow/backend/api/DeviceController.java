@@ -1,10 +1,14 @@
 package com.aquaflow.backend.api;
 
+import com.aquaflow.backend.domain.DeviceService;
+import com.aquaflow.backend.domain.EdgeNodeRegistryService;
 import com.aquaflow.backend.dto.request.DeviceRequest;
 import com.aquaflow.backend.dto.response.DeviceResponse;
-import com.aquaflow.backend.domain.DeviceService;
+import com.aquaflow.backend.dto.response.NodeHealthResponse;
+import com.aquaflow.backend.dto.response.NodeHealthSummaryResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,9 +22,13 @@ public class DeviceController {
     private static final Logger log = LoggerFactory.getLogger(DeviceController.class);
 
     private final DeviceService deviceService;
+    private final EdgeNodeRegistryService edgeNodeRegistryService;
 
-    public DeviceController(DeviceService deviceService) {
+    @Autowired
+    public DeviceController(DeviceService deviceService,
+                            @Autowired(required = false) EdgeNodeRegistryService edgeNodeRegistryService) {
         this.deviceService = deviceService;
+        this.edgeNodeRegistryService = edgeNodeRegistryService;
     }
 
     @PostMapping
@@ -65,5 +73,23 @@ public class DeviceController {
     public ResponseEntity<List<DeviceResponse>> getDevicesByStatus(@PathVariable String status) {
         log.info("GET /api/v1/devices/status/{}", status);
         return ResponseEntity.ok(deviceService.getDevicesByStatus(status));
+    }
+
+    @GetMapping("/nodes/health")
+    public ResponseEntity<NodeHealthSummaryResponse> getNodeHealthSummary() {
+        log.info("GET /api/v1/devices/nodes/health");
+        if (edgeNodeRegistryService != null) {
+            return ResponseEntity.ok(edgeNodeRegistryService.getNodeHealthSummary());
+        }
+        return ResponseEntity.ok(NodeHealthSummaryResponse.builder().build());
+    }
+
+    @GetMapping("/nodes/{id}/health")
+    public ResponseEntity<NodeHealthResponse> getNodeHealthDetail(@PathVariable Long id) {
+        log.info("GET /api/v1/devices/nodes/{}/health", id);
+        if (edgeNodeRegistryService != null) {
+            return ResponseEntity.ok(edgeNodeRegistryService.getNodeHealth(id));
+        }
+        return ResponseEntity.notFound().build();
     }
 }

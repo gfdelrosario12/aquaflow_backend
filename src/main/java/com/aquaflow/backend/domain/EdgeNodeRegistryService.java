@@ -31,6 +31,8 @@ public interface EdgeNodeRegistryService {
 
     NodeHealthResponse getNodeHealth(Long id);
 
+    NodeHealthSummaryResponse getNodeHealthSummary();
+
     List<TelemetryReadingResponse> getLatestTelemetry(Long id);
 
     Page<TelemetryReadingResponse> getHistoricalTelemetry(Long id, Pageable pageable);

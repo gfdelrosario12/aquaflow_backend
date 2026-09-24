@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "irrigation_audit_logs")
+@Table(name = "system_audit_logs")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class IrrigationAuditLog {
+public class SystemAuditLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,18 +32,26 @@ public class IrrigationAuditLog {
     @Column(name = "entity_id", nullable = false)
     private String entityId;
 
-    @Column(name = "payload_json", columnDefinition = "TEXT")
-    private String payloadJson;
-
     @Column(name = "correlation_id")
     private String correlationId;
+
+    @Column(name = "previous_state")
+    private String previousState;
+
+    @Column(name = "resulting_state")
+    private String resultingState;
+
+    @Column(name = "payload_json", columnDefinition = "TEXT")
+    private String payloadJson;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
     protected void onCreate() {
-        createdAt = LocalDateTime.now();
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
     }
 }
 
