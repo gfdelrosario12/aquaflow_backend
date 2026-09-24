@@ -28,7 +28,6 @@ public class FieldController {
     private final FieldTopologyService fieldTopologyService;
     private final ZoneAggregationService zoneAggregationService;
 
-    public FieldController(FieldService fieldService, FieldTopologyService fieldTopologyService) {
     public FieldController(FieldService fieldService,
                            FieldTopologyService fieldTopologyService,
                            ZoneAggregationService zoneAggregationService) {

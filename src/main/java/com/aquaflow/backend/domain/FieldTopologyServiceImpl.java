@@ -36,7 +36,6 @@ public class FieldTopologyServiceImpl implements FieldTopologyService {
     public FieldTopologyServiceImpl(FieldRepository fieldRepository,
                                     MonitoringZoneRepository monitoringZoneRepository,
                                     MonitoringPointRepository monitoringPointRepository,
-                                    EdgeNodeRepository edgeNodeRepository) {
                                     EdgeNodeRepository edgeNodeRepository,
                                     ZoneAggregationService zoneAggregationService) {
         this.fieldRepository = fieldRepository;

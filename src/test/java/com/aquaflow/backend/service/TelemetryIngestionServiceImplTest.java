@@ -45,6 +45,9 @@ class TelemetryIngestionServiceImplTest {
     @Mock
     private PayloadDecoderRegistry payloadDecoderRegistry;
 
+    @Mock
+    private com.aquaflow.backend.infrastructure.event.SystemEventPublisher systemEventPublisher;
+
     private TelemetryIngestionServiceImpl service;
 
     @BeforeEach
@@ -55,7 +58,8 @@ class TelemetryIngestionServiceImplTest {
                 monitoringPointRepository,
                 telemetryReadingRepository,
                 edgeNodeRegistryService,
-                payloadDecoderRegistry
+                payloadDecoderRegistry,
+                systemEventPublisher
         );
     }
 

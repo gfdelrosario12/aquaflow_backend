@@ -11,6 +11,7 @@ import com.aquaflow.backend.infrastructure.exception.ValidationException;
 import com.aquaflow.backend.persistence.EdgeNodeRepository;
 import com.aquaflow.backend.persistence.MonitoringPointRepository;
 import com.aquaflow.backend.persistence.TelemetryReadingRepository;
+import com.aquaflow.backend.infrastructure.event.SystemEventPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,7 @@ public class TelemetryIngestionServiceImpl implements TelemetryIngestionService 
     private final TelemetryReadingRepository telemetryReadingRepository;
     private final EdgeNodeRegistryService edgeNodeRegistryService;
     private final PayloadDecoderRegistry payloadDecoderRegistry;
+    private final SystemEventPublisher systemEventPublisher;
 
     // Frame Counter deduplication cache per node
     private final Map<String, Long> lastSeenFrameCounters = new ConcurrentHashMap<>();
@@ -148,6 +150,15 @@ public class TelemetryIngestionServiceImpl implements TelemetryIngestionService 
 
         // Update Node Health & Last-Seen Metrics
         updateNodeHealthAndMetrics(node, decoded, validatedTimestamp);
+
+        Long fieldId = (node.getMonitoringZone() != null && node.getMonitoringZone().getField() != null)
+                ? node.getMonitoringZone().getField().getId() : null;
+
+        try {
+            systemEventPublisher.publishTelemetryReceived(node.getNodeId(), fieldId, count);
+        } catch (Exception e) {
+            // Asynchronous event publication error fallback
+        }
 
         return TelemetryUplinkResponse.builder()
                 .success(true)

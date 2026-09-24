@@ -50,7 +50,6 @@ class FieldTopologyServiceTest {
                 fieldRepository,
                 monitoringZoneRepository,
                 monitoringPointRepository,
-                edgeNodeRepository
                 edgeNodeRepository,
                 zoneAggregationService
         );

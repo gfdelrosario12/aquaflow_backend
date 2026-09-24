@@ -43,7 +43,6 @@ class FieldControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        fieldController = new FieldController(fieldService, fieldTopologyService);
         fieldController = new FieldController(fieldService, fieldTopologyService, zoneAggregationService);
     }
 

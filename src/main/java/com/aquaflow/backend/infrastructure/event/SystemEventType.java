@@ -1,0 +1,13 @@
+package com.aquaflow.backend.infrastructure.event;
+
+public enum SystemEventType {
+    TELEMETRY_RECEIVED,
+    NODE_STATUS_CHANGED,
+    ZONE_TELEMETRY_UPDATED,
+    IRRIGATION_DECISION_MADE,
+    CONFIG_SYNCED,
+    IRRIGATION_EXECUTION_UPDATED,
+    ALARM_TRIGGERED,
+    EMERGENCY_STOP_ACTIVATED
+}
+
