@@ -40,6 +40,16 @@ public class IrrigationDecisionServiceImpl implements IrrigationDecisionService 
     private final MonitoringZoneRepository monitoringZoneRepository;
     private final IrrigationDecisionValidator validator;
     private final SystemEventPublisher systemEventPublisher;
+    private final IrrigationCommandStateMachine stateMachine;
+
+    public IrrigationDecisionServiceImpl(IrrigationDecisionRepository decisionRepository,
+                                         EdgeNodeRepository edgeNodeRepository,
+                                         FieldRepository fieldRepository,
+                                         MonitoringZoneRepository monitoringZoneRepository,
+                                         IrrigationDecisionValidator validator,
+                                         SystemEventPublisher systemEventPublisher) {
+        this(decisionRepository, edgeNodeRepository, fieldRepository, monitoringZoneRepository, validator, systemEventPublisher, null);
+    }
 
     @Autowired
     public IrrigationDecisionServiceImpl(IrrigationDecisionRepository decisionRepository,
@@ -48,12 +58,15 @@ public class IrrigationDecisionServiceImpl implements IrrigationDecisionService 
                                          MonitoringZoneRepository monitoringZoneRepository,
                                          IrrigationDecisionValidator validator,
                                          @Autowired(required = false) SystemEventPublisher systemEventPublisher) {
+                                         @Autowired(required = false) SystemEventPublisher systemEventPublisher,
+                                         @Autowired(required = false) IrrigationCommandStateMachine stateMachine) {
         this.decisionRepository = decisionRepository;
         this.edgeNodeRepository = edgeNodeRepository;
         this.fieldRepository = fieldRepository;
         this.monitoringZoneRepository = monitoringZoneRepository;
         this.validator = validator;
         this.systemEventPublisher = systemEventPublisher;
+        this.stateMachine = stateMachine;
     }
 
     @Override
@@ -87,6 +100,21 @@ public class IrrigationDecisionServiceImpl implements IrrigationDecisionService 
 
         IrrigationDecision saved = decisionRepository.save(decision);
         IrrigationDecisionResponse response = DtoMapper.toIrrigationDecisionResponse(saved);
+
+        if (stateMachine != null) {
+            String corrId = saved.getCorrelationId() != null ? saved.getCorrelationId() : "DECISION-" + saved.getId();
+            Long fieldId = (node.getMonitoringZone() != null && node.getMonitoringZone().getField() != null)
+                    ? node.getMonitoringZone().getField().getId() : null;
+            String triggerReasonStr = saved.getTriggerReason() != null ? saved.getTriggerReason().name() : null;
+            stateMachine.registerCommand(corrId, "AUTONOMOUS_DECISION", fieldId, node.getId(), "EDGE_NODE", triggerReasonStr);
+            if ("IN_PROGRESS".equalsIgnoreCase(saved.getExecutionStatus())) {
+                stateMachine.transitionState(corrId, com.aquaflow.backend.entity.CommandState.EXECUTING, "EDGE_NODE", "Execution in progress", null, null, null);
+            } else if ("COMPLETED".equalsIgnoreCase(saved.getExecutionStatus())) {
+                stateMachine.transitionState(corrId, com.aquaflow.backend.entity.CommandState.EDGE_ACKNOWLEDGED, "EDGE_NODE", "Edge acknowledged", null, null, null);
+                stateMachine.transitionState(corrId, com.aquaflow.backend.entity.CommandState.EXECUTING, "EDGE_NODE", "Executing decision", null, null, null);
+                stateMachine.transitionState(corrId, com.aquaflow.backend.entity.CommandState.COMPLETED, "EDGE_NODE", "Decision execution completed", null, null, null);
+            }
+        }
 
         if (systemEventPublisher != null) {
             try {

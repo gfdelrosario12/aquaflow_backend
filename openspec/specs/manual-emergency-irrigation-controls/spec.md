@@ -29,11 +29,11 @@ The system SHALL execute emergency stop requests with highest processing priorit
 - **THEN** the system immediately queues emergency stop downlinks, logs an emergency audit record, publishes an EMERGENCY_STOP_ACTIVATED system event, and returns command status QUEUED
 
 ### Requirement: System SHALL track command lifecycle states without assuming immediate physical execution
-The system SHALL track and expose command execution lifecycle states including QUEUED, DELIVERED, ACKNOWLEDGED, EXECUTED, REJECTED_SAFETY_INTERLOCK, and FAILED. HTTP API acceptance SHALL NOT imply physical execution on edge hardware.
+The system SHALL track and enforce command execution state machine transitions including `ACCEPTED`, `QUEUED`, `DOWNLINK_TRANSMITTED`, `EDGE_ACKNOWLEDGED`, `EXECUTING`, `COMPLETED`, `FAILED`, `CANCELLED`, `OVERRIDDEN`, and `REJECTED_SAFETY_INTERLOCK`. HTTP API acceptance SHALL NOT imply physical execution on edge hardware.
 
 #### Scenario: Process edge command status acknowledgement
 - **WHEN** an edge node sends an acknowledgement or safety interlock rejection for a command correlation ID
-- **THEN** the system updates the command status to ACKNOWLEDGED, EXECUTED, or REJECTED_SAFETY_INTERLOCK accordingly
+- **THEN** the system updates the command status to `EDGE_ACKNOWLEDGED`, `EXECUTING`, `COMPLETED`, or `REJECTED_SAFETY_INTERLOCK` accordingly via valid state machine transitions
 
 ### Requirement: System SHALL preserve edge hardware safety interlocks for manual commands
 The cloud backend SHALL pass hardware safety boundaries with manual commands and record edge safety interlock rejections without bypassing physical hardware protection on the edge.

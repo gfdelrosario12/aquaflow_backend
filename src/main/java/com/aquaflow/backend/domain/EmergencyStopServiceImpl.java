@@ -33,6 +33,17 @@ public class EmergencyStopServiceImpl implements EmergencyStopService {
     private final IrrigationAuditLogRepository auditLogRepository;
     private final SystemEventPublisher systemEventPublisher;
     private final ObjectMapper objectMapper;
+    private final IrrigationCommandStateMachine stateMachine;
+
+    public EmergencyStopServiceImpl(FieldRepository fieldRepository,
+                                    EdgeNodeRepository edgeNodeRepository,
+                                    MonitoringZoneRepository monitoringZoneRepository,
+                                    DownlinkQueueService downlinkQueueService,
+                                    IrrigationAuditLogRepository auditLogRepository,
+                                    SystemEventPublisher systemEventPublisher,
+                                    ObjectMapper objectMapper) {
+        this(fieldRepository, edgeNodeRepository, monitoringZoneRepository, downlinkQueueService, auditLogRepository, systemEventPublisher, objectMapper, null);
+    }
 
     @Autowired
     public EmergencyStopServiceImpl(FieldRepository fieldRepository,
@@ -42,6 +53,8 @@ public class EmergencyStopServiceImpl implements EmergencyStopService {
                                     IrrigationAuditLogRepository auditLogRepository,
                                     @Autowired(required = false) SystemEventPublisher systemEventPublisher,
                                     ObjectMapper objectMapper) {
+                                    ObjectMapper objectMapper,
+                                    @Autowired(required = false) IrrigationCommandStateMachine stateMachine) {
         this.fieldRepository = fieldRepository;
         this.edgeNodeRepository = edgeNodeRepository;
         this.monitoringZoneRepository = monitoringZoneRepository;
@@ -49,6 +62,7 @@ public class EmergencyStopServiceImpl implements EmergencyStopService {
         this.auditLogRepository = auditLogRepository;
         this.systemEventPublisher = systemEventPublisher;
         this.objectMapper = objectMapper;
+        this.stateMachine = stateMachine;
     }
 
     @Override
@@ -68,6 +82,11 @@ public class EmergencyStopServiceImpl implements EmergencyStopService {
 
         String correlationId = UUID.randomUUID().toString();
         LocalDateTime now = LocalDateTime.now();
+
+        if (stateMachine != null) {
+            stateMachine.registerCommand(correlationId, "EMERGENCY_STOP", targetFieldId, null, request.getOperatorId(), request.getReason());
+            stateMachine.transitionState(correlationId, CommandState.QUEUED, request.getOperatorId(), request.getReason(), null, request.getOperatorId(), "ROLE_ADMIN");
+        }
 
         // 1. Log audit entry for emergency stop
         saveAuditLog("EMERGENCY_STOP", request.getOperatorId(),
