@@ -16,6 +16,7 @@ import com.aquaflow.backend.persistence.AutoIrrigationConfigRepository;
 import com.aquaflow.backend.persistence.FieldRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,15 +33,27 @@ public class AwdConfigServiceImpl implements AwdConfigService {
     private final AutoIrrigationConfigRepository autoIrrigationConfigRepository;
     private final AwdConfigValidator awdConfigValidator;
     private final SystemEventPublisher systemEventPublisher;
+    private final EdgeNodeSyncService edgeNodeSyncService;
+
+    @Autowired
+    public AwdConfigServiceImpl(FieldRepository fieldRepository,
+                                AutoIrrigationConfigRepository autoIrrigationConfigRepository,
+                                AwdConfigValidator awdConfigValidator,
+                                SystemEventPublisher systemEventPublisher) {
+                                SystemEventPublisher systemEventPublisher,
+                                @Autowired(required = false) EdgeNodeSyncService edgeNodeSyncService) {
+        this.fieldRepository = fieldRepository;
+        this.autoIrrigationConfigRepository = autoIrrigationConfigRepository;
+        this.awdConfigValidator = awdConfigValidator;
+        this.systemEventPublisher = systemEventPublisher;
+        this.edgeNodeSyncService = edgeNodeSyncService;
+    }
 
     public AwdConfigServiceImpl(FieldRepository fieldRepository,
                                 AutoIrrigationConfigRepository autoIrrigationConfigRepository,
                                 AwdConfigValidator awdConfigValidator,
                                 SystemEventPublisher systemEventPublisher) {
-        this.fieldRepository = fieldRepository;
-        this.autoIrrigationConfigRepository = autoIrrigationConfigRepository;
-        this.awdConfigValidator = awdConfigValidator;
-        this.systemEventPublisher = systemEventPublisher;
+        this(fieldRepository, autoIrrigationConfigRepository, awdConfigValidator, systemEventPublisher, null);
     }
 
     @Override
@@ -135,6 +148,14 @@ public class AwdConfigServiceImpl implements AwdConfigService {
                         .build());
             } catch (Exception e) {
                 log.warn("Failed to publish CONFIG_SYNCED event for fieldId {}: {}", fieldId, e.getMessage());
+            }
+        }
+
+        if (edgeNodeSyncService != null) {
+            try {
+                edgeNodeSyncService.syncConfigForField(fieldId);
+            } catch (Exception e) {
+                log.warn("Failed to trigger edge node config sync for fieldId {}: {}", fieldId, e.getMessage());
             }
         }
 
