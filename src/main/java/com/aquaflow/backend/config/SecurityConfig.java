@@ -1,6 +1,12 @@
 package com.aquaflow.backend.config;
 
+import com.aquaflow.backend.infrastructure.security.CustomAccessDeniedHandler;
+import com.aquaflow.backend.infrastructure.security.CustomAuthenticationEntryPoint;
 import com.aquaflow.backend.infrastructure.security.JwtAuthenticationFilter;
+import com.aquaflow.backend.infrastructure.security.RateLimitingFilter;
+import com.aquaflow.backend.infrastructure.security.SecurityHeadersFilter;
+import com.aquaflow.backend.infrastructure.security.WebhookAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,6 +22,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -23,33 +35,78 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final WebhookAuthenticationFilter webhookAuthenticationFilter;
+    private final SecurityHeadersFilter securityHeadersFilter;
+    private final RateLimitingFilter rateLimitingFilter;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+    private final CustomAccessDeniedHandler accessDeniedHandler;
     private final UserDetailsService userDetailsService;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, UserDetailsService userDetailsService) {
+    @Value("${aquaflow.cors.allowed-origins:*}")
+    private String allowedOrigins;
+
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
+                          WebhookAuthenticationFilter webhookAuthenticationFilter,
+                          SecurityHeadersFilter securityHeadersFilter,
+                          RateLimitingFilter rateLimitingFilter,
+                          CustomAuthenticationEntryPoint authenticationEntryPoint,
+                          CustomAccessDeniedHandler accessDeniedHandler,
+                          UserDetailsService userDetailsService) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.webhookAuthenticationFilter = webhookAuthenticationFilter;
+        this.securityHeadersFilter = securityHeadersFilter;
+        this.rateLimitingFilter = rateLimitingFilter;
+        this.authenticationEntryPoint = authenticationEntryPoint;
+        this.accessDeniedHandler = accessDeniedHandler;
         this.userDetailsService = userDetailsService;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                        .accessDeniedHandler(accessDeniedHandler)
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/v1/telemetry/**").permitAll()
-                        .requestMatchers("/api/v1/thirdparty/**").permitAll()
-                        .requestMatchers("/actuator/health").permitAll()
-                        .requestMatchers("/actuator/info").permitAll()
-                        .requestMatchers("/actuator/prometheus").hasRole("ADMIN")
-                        .requestMatchers("/actuator/metrics").hasRole("ADMIN")
-                        .requestMatchers("/swagger-ui/**").permitAll()
-                        .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers("/api/v1/chirpstack/webhook/**", "/api/v1/lora/webhook/**").hasAnyRole("EDGE_NODE", "OPERATOR", "ADMIN")
+                        .requestMatchers("/api/v1/audit/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/irrigation/emergency-stop", "/api/v1/irrigation/manual/**").hasAnyRole("ADMIN", "OPERATOR")
+                        .requestMatchers("/api/v1/nodes/*/commission", "/api/v1/nodes/*/decommission", "/api/v1/nodes/*/replace").hasRole("ADMIN")
+                        .requestMatchers("/actuator/health", "/actuator/info").permitAll()
+                        .requestMatchers("/actuator/prometheus", "/actuator/metrics").hasRole("ADMIN")
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/api/v1/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
+                .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(securityHeadersFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(webhookAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        if ("*".equals(allowedOrigins.trim())) {
+            configuration.addAllowedOriginPattern("*");
+        } else {
+            configuration.setAllowedOrigins(Arrays.asList(allowedOrigins.split(",")));
+        }
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Correlation-ID", "X-Webhook-Secret", "X-Downlink-Secret"));
+        configuration.setExposedHeaders(List.of("X-Correlation-ID", "Authorization"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     @Bean

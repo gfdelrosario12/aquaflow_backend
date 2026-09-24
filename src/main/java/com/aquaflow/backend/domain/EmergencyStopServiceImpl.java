@@ -52,7 +52,6 @@ public class EmergencyStopServiceImpl implements EmergencyStopService {
                                     DownlinkQueueService downlinkQueueService,
                                     IrrigationAuditLogRepository auditLogRepository,
                                     @Autowired(required = false) SystemEventPublisher systemEventPublisher,
-                                    ObjectMapper objectMapper) {
                                     ObjectMapper objectMapper,
                                     @Autowired(required = false) IrrigationCommandStateMachine stateMachine) {
         this.fieldRepository = fieldRepository;
@@ -175,4 +174,3 @@ public class EmergencyStopServiceImpl implements EmergencyStopService {
         }
     }
 }
-

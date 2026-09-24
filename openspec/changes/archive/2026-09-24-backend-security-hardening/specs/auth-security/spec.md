@@ -1,21 +1,6 @@
-# auth-security Specification
-
-## Purpose
-TBD - created by archiving change backend-architecture-baseline. Update Purpose after archive.
-
-Defines authentication, authorization, role permissions (ADMIN, OPERATOR, VIEWER, EDGE_NODE), LoRaWAN webhook authentication, security headers, rate limiting, and secret sanitization for the AquaFlow backend.
-
-## Requirements
-
-### Requirement: System SHALL authenticate users via JWT
-The system SHALL issue JWT tokens upon successful login and validate tokens on each request.
-
-#### Scenario: Successful authentication
-- **WHEN** user submits valid credentials
-- **THEN** system returns JWT access token and refresh token
+## MODIFIED Requirements
 
 ### Requirement: System SHALL enforce role-based access control
-API endpoints SHALL be protected by role-based authorization (ADMIN, OPERATOR, VIEWER roles).
 API endpoints SHALL be protected by role-based authorization enforcing permissions across `ADMIN`, `OPERATOR`, `VIEWER`, and `EDGE_NODE` roles.
 
 #### Scenario: Restricted admin access
@@ -30,19 +15,7 @@ API endpoints SHALL be protected by role-based authorization enforcing permissio
 - **WHEN** a viewer with `ROLE_VIEWER` attempts to create or update fields, zones, or AWD threshold configurations
 - **THEN** system rejects request with 403 Forbidden
 
-### Requirement: System SHALL support token refresh
-The system SHALL allow token renewal using a refresh token before access token expiry.
-
-#### Scenario: Refresh access token
-- **WHEN** client submits refresh token
-- **THEN** system returns new access token if refresh token is valid
-
-### Requirement: System SHALL password-protect user accounts
-User passwords SHALL be hashed with BCrypt before storage.
-
-#### Scenario: Store user password
-- **WHEN** user creates or updates password
-- **THEN** system stores only BCrypt-hashed version
+## ADDED Requirements
 
 ### Requirement: System SHALL distinguish human operator and edge-node device authentication
 The system SHALL evaluate human operator JWT identity tokens separately from edge-node device tokens or signed credentials.
@@ -79,3 +52,4 @@ The system SHALL include security headers (HSTS, CSP, X-Frame-Options, X-Content
 #### Scenario: Return HTTP security headers
 - **WHEN** client receives HTTP responses from backend API
 - **THEN** response headers include `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, and strict CORS headers
+

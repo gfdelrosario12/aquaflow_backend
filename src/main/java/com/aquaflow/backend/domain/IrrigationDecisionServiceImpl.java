@@ -57,7 +57,6 @@ public class IrrigationDecisionServiceImpl implements IrrigationDecisionService 
                                          FieldRepository fieldRepository,
                                          MonitoringZoneRepository monitoringZoneRepository,
                                          IrrigationDecisionValidator validator,
-                                         @Autowired(required = false) SystemEventPublisher systemEventPublisher) {
                                          @Autowired(required = false) SystemEventPublisher systemEventPublisher,
                                          @Autowired(required = false) IrrigationCommandStateMachine stateMachine) {
         this.decisionRepository = decisionRepository;
@@ -242,4 +241,3 @@ public class IrrigationDecisionServiceImpl implements IrrigationDecisionService 
         throw new ResourceNotFoundException("EdgeNode identity missing from request");
     }
 }
-

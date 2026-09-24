@@ -62,7 +62,6 @@ public class ManualControlServiceImpl implements ManualControlService {
                                     DownlinkQueueItemRepository downlinkQueueItemRepository,
                                     IrrigationAuditLogRepository auditLogRepository,
                                     @Autowired(required = false) SystemEventPublisher systemEventPublisher,
-                                    ObjectMapper objectMapper) {
                                     ObjectMapper objectMapper,
                                     @Autowired(required = false) IrrigationCommandStateMachine stateMachine) {
         this.fieldRepository = fieldRepository;
