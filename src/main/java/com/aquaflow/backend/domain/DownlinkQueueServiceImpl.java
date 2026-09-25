@@ -30,7 +30,6 @@ public class DownlinkQueueServiceImpl implements DownlinkQueueService {
     private final DownlinkQueueItemRepository queueItemRepository;
     private final LoraNetworkServerClient loraNetworkServerClient;
 
-    @Autowired
     public DownlinkQueueServiceImpl(DownlinkQueueItemRepository queueItemRepository,
                                    @Autowired(required = false) LoraNetworkServerClient loraNetworkServerClient) {
         this.queueItemRepository = queueItemRepository;

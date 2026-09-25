@@ -16,5 +16,14 @@ public class AuditExportResponse {
     private int recordCount;
     private String content; // JSON string or CSV payload
     private LocalDateTime exportedAt;
+
+    public String getFormat() { return format; }
+    public void setFormat(String format) { this.format = format; }
+    public int getRecordCount() { return recordCount; }
+    public void setRecordCount(int recordCount) { this.recordCount = recordCount; }
+    public String getContent() { return content; }
+    public void setContent(String content) { this.content = content; }
+    public LocalDateTime getExportedAt() { return exportedAt; }
+    public void setExportedAt(LocalDateTime exportedAt) { this.exportedAt = exportedAt; }
 }
 

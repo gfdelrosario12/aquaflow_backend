@@ -5,9 +5,6 @@ import com.aquaflow.backend.dto.response.ZoneResponse;
 import com.aquaflow.backend.domain.ZoneService;
 import com.aquaflow.backend.infrastructure.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
-
-import java.net.URI;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 

@@ -1,6 +1,5 @@
 package com.aquaflow.backend.dto.request;
 
-import com.aquaflow.backend.dto.SignalMetadataDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

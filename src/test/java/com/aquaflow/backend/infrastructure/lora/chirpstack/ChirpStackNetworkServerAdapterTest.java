@@ -79,6 +79,7 @@ class ChirpStackNetworkServerAdapterTest {
         assertThat(result.getCorrelationId()).isEqualTo("corr-123");
         assertThat(result.getFCnt()).isEqualTo(42L);
 
+        @SuppressWarnings("unchecked")
         ArgumentCaptor<HttpEntity<ChirpStackDownlinkRequest>> captor = ArgumentCaptor.forClass(HttpEntity.class);
         verify(restTemplate).postForEntity(
                 eq("http://localhost:8080/api/devices/0011223344556677/queue"),

@@ -1,40 +1,72 @@
-version: '3.8'
-
 services:
-  backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
+  postgres:
+    image: postgres:15-alpine
+    container_name: aquaflow-postgres
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - SPRING_DATASOURCE_USERNAME=sa
-      - SPRING_DATASOURCE_PASSWORD=
-      - SPRING_DATASOURCE_URL=jdbc:h2:mem:aquaflow-dev
-    depends_on:
-      - mqtt-broker
+      POSTGRES_DB: aquaflow
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: your-postgres-password
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d aquaflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
-      - ./src/main/resources/db/migration:/db/migration:ro
+      - postgres_data:/var/lib/postgresql/data
 
-  mqtt-broker:
+  redis:
+    image: redis:7-alpine
+    container_name: aquaflow-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - redis_data:/data
+
+  mosquitto:
     image: eclipse-mosquitto:2
+    container_name: aquaflow-mosquitto
     ports:
       - "1883:1883"
       - "9001:9001"
     volumes:
-      - ./mqtt-broker-config:/mosquitto/config
+      - ./mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+    healthcheck:
+      test: ["CMD-SHELL", "timeout 5 mosquitto_sub -t '$$SYS/#' -C 1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  database:
-    image: postgresql:16-alpine
-    environment:
-      POSTGRES_DB: aquaflow
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aquaflow-backend
     ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/aquaflow
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=your-postgres-password
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MQTT_BROKER_URL=tcp://mosquitto:1883
+      - JWT_SECRET=your-jwt-secret
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mosquitto:
+        condition: service_healthy
 
 volumes:
   postgres_data:
+  redis_data:

@@ -39,7 +39,6 @@ public class IrrigationCommandStateMachineImpl implements IrrigationCommandState
         ALLOWED_TRANSITIONS.put(CommandState.OVERRIDDEN, Collections.emptySet());
     }
 
-    @Autowired
     public IrrigationCommandStateMachineImpl(IrrigationCommandRecordRepository commandRecordRepository,
                                              CommandStateTransitionHistoryRepository historyRepository,
                                              @Autowired(required = false) AuditLogService auditLogService) {

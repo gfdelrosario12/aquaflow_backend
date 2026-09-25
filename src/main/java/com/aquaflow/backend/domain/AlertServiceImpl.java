@@ -4,7 +4,6 @@ import com.aquaflow.backend.dto.response.AlertResponse;
 import com.aquaflow.backend.entity.Alert;
 import com.aquaflow.backend.infrastructure.exception.ResourceNotFoundException;
 import com.aquaflow.backend.persistence.AlertRepository;
-import com.aquaflow.backend.domain.AlertService;
 import com.aquaflow.backend.infrastructure.util.DtoMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

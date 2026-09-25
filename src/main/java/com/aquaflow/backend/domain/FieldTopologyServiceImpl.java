@@ -17,6 +17,7 @@ import com.aquaflow.backend.persistence.MonitoringPointRepository;
 import com.aquaflow.backend.persistence.MonitoringZoneRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,12 +38,13 @@ public class FieldTopologyServiceImpl implements FieldTopologyService {
     private final ZoneAggregationService zoneAggregationService;
     private final AutoIrrigationConfigRepository autoIrrigationConfigRepository;
 
+    @Autowired
     public FieldTopologyServiceImpl(FieldRepository fieldRepository,
                                     MonitoringZoneRepository monitoringZoneRepository,
                                     MonitoringPointRepository monitoringPointRepository,
                                     EdgeNodeRepository edgeNodeRepository,
-                                    ZoneAggregationService zoneAggregationService,
-                                    AutoIrrigationConfigRepository autoIrrigationConfigRepository) {
+                                    @Autowired(required = false) ZoneAggregationService zoneAggregationService,
+                                    @Autowired(required = false) AutoIrrigationConfigRepository autoIrrigationConfigRepository) {
         this.fieldRepository = fieldRepository;
         this.monitoringZoneRepository = monitoringZoneRepository;
         this.monitoringPointRepository = monitoringPointRepository;

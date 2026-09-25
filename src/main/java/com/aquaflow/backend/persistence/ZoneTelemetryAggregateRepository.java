@@ -2,13 +2,11 @@ package com.aquaflow.backend.persistence;
 
 import com.aquaflow.backend.entity.ZoneTelemetryAggregate;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
 public interface ZoneTelemetryAggregateRepository extends JpaRepository<ZoneTelemetryAggregate, Long> {
 
     Optional<ZoneTelemetryAggregate> findTopByZoneIdOrderByCalculatedAtDesc(Long zoneId);

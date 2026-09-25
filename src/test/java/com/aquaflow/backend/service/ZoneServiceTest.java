@@ -1,7 +1,5 @@
 package com.aquaflow.backend.service;
 
-import com.aquaflow.backend.dto.request.ZoneRequest;
-import com.aquaflow.backend.dto.response.ZoneResponse;
 import com.aquaflow.backend.entity.Zone;
 import com.aquaflow.backend.persistence.ZoneRepository;
 import org.junit.jupiter.api.Test;

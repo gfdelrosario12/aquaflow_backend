@@ -6,7 +6,6 @@ import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
@@ -18,11 +17,14 @@ public class MqttMessageListener implements MqttCallback {
 
     private static final Logger log = LoggerFactory.getLogger(MqttMessageListener.class);
 
-    @Autowired
-    private SensorDataService sensorDataService;
+    private final SensorDataService sensorDataService;
 
     private MqttClient mqttClient;
     private ExecutorService executor;
+
+    public MqttMessageListener(SensorDataService sensorDataService) {
+        this.sensorDataService = sensorDataService;
+    }
 
     @PostConstruct
     public void init() {

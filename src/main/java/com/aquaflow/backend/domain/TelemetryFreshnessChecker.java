@@ -24,7 +24,6 @@ public class TelemetryFreshnessChecker {
     private final EdgeNodeRepository edgeNodeRepository;
     private final SystemEventPublisher systemEventPublisher;
 
-    @Autowired
     public TelemetryFreshnessChecker(EdgeNodeRepository edgeNodeRepository,
                                     @Autowired(required = false) SystemEventPublisher systemEventPublisher) {
         this.edgeNodeRepository = edgeNodeRepository;

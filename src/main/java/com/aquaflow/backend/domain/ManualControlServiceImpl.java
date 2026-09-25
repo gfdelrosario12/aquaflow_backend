@@ -90,8 +90,12 @@ public class ManualControlServiceImpl implements ManualControlService {
         LocalDateTime now = LocalDateTime.now();
 
         if (stateMachine != null) {
-            stateMachine.registerCommand(correlationId, "MANUAL_START", field.getId(), null, request.getOperatorId(), request.getRationale());
-            stateMachine.transitionState(correlationId, CommandState.QUEUED, request.getOperatorId(), "Manual start queued", null, request.getOperatorId(), "OPERATOR");
+            try {
+                stateMachine.registerCommand(correlationId, "MANUAL_START", field.getId(), null, request.getOperatorId(), request.getRationale());
+                stateMachine.transitionState(correlationId, CommandState.QUEUED, request.getOperatorId(), "Manual start queued", null, request.getOperatorId(), "OPERATOR");
+            } catch (Exception e) {
+                log.warn("Failed to register manual start state transition: {}", e.getMessage());
+            }
         }
 
         // 1. Log audit entry
@@ -164,8 +168,12 @@ public class ManualControlServiceImpl implements ManualControlService {
         LocalDateTime now = LocalDateTime.now();
 
         if (stateMachine != null) {
-            stateMachine.registerCommand(correlationId, "MANUAL_STOP", field.getId(), null, request.getOperatorId(), request.getRationale());
-            stateMachine.transitionState(correlationId, CommandState.QUEUED, request.getOperatorId(), "Manual stop queued", null, request.getOperatorId(), "OPERATOR");
+            try {
+                stateMachine.registerCommand(correlationId, "MANUAL_STOP", field.getId(), null, request.getOperatorId(), request.getRationale());
+                stateMachine.transitionState(correlationId, CommandState.QUEUED, request.getOperatorId(), "Manual stop queued", null, request.getOperatorId(), "OPERATOR");
+            } catch (Exception e) {
+                log.warn("Failed to register manual stop state transition: {}", e.getMessage());
+            }
         }
 
         // 1. Log audit entry

@@ -7,7 +7,6 @@ import com.aquaflow.backend.entity.Zone;
 import com.aquaflow.backend.infrastructure.exception.ResourceNotFoundException;
 import com.aquaflow.backend.persistence.IrrigationScheduleRepository;
 import com.aquaflow.backend.persistence.ZoneRepository;
-import com.aquaflow.backend.domain.IrrigationScheduleService;
 import com.aquaflow.backend.infrastructure.util.DtoMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

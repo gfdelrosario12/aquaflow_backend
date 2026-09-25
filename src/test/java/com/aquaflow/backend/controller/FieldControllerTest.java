@@ -7,7 +7,6 @@ import com.aquaflow.backend.domain.ZoneAggregationService;
 import com.aquaflow.backend.dto.request.FieldRequest;
 import com.aquaflow.backend.dto.response.FieldResponse;
 import com.aquaflow.backend.dto.response.FieldTopologyResponse;
-import com.aquaflow.backend.infrastructure.exception.ResourceNotFoundException;
 import com.aquaflow.backend.dto.response.ZoneTelemetryResponse;
 import com.aquaflow.backend.dto.response.ZoneTelemetryTrendResponse;
 import com.aquaflow.backend.entity.ZoneHealthStatus;
@@ -18,11 +17,9 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;

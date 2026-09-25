@@ -9,7 +9,6 @@ import com.aquaflow.backend.entity.IrrigationCommandRecord;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +22,6 @@ public class CommandStateMachineController {
 
     private final IrrigationCommandStateMachine stateMachine;
 
-    @Autowired
     public CommandStateMachineController(IrrigationCommandStateMachine stateMachine) {
         this.stateMachine = stateMachine;
     }

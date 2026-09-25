@@ -2,7 +2,6 @@
 
 ## Purpose
 TBD - created by archiving change backend-architecture-baseline. Update Purpose after archive.
-
 ## Requirements
 ### Requirement: System SHALL ingest sensor data via MQTT
 The system SHALL subscribe to MQTT topics for sensor readings and ingest incoming data from edge devices in real time.
@@ -70,11 +69,15 @@ The system SHALL validate uplink timestamps against acceptable drift thresholds 
 - **THEN** system extracts signal metrics and updates `EdgeNode` health metrics
 
 ### Requirement: System SHALL process normalized LoRaWAN uplinks via ChirpStack webhook controller
-The system SHALL expose dedicated webhook endpoints for ChirpStack network server events (`POST /api/v1/thirdparty/chirpstack/webhook`) that validate authorization and normalize payloads before calling telemetry ingestion services.
+The system SHALL expose dedicated webhook endpoints for ChirpStack network server events (`POST /api/v1/thirdparty/chirpstack/webhook`) that validate authorization, normalize payloads before calling telemetry ingestion services, trigger edge node freshness updates, update zone water-level metrics, and stream updates to WebSocket clients.
 
 #### Scenario: Receive ChirpStack uplink event
 - **WHEN** ChirpStack posts a device uplink event webhook to `/api/v1/thirdparty/chirpstack/webhook` with event `up`
-- **THEN** system validates authorization header, parses ChirpStack DTO, maps to provider-neutral `TelemetryUplinkRequest`, and delegates to `TelemetryIngestionService`
+- **THEN** system validates authorization header, parses ChirpStack DTO, maps to provider-neutral `TelemetryUplinkRequest`, delegates to `TelemetryIngestionService`, updates node freshness, recalculates zone water level average, and publishes realtime WebSocket frames
+
+#### Scenario: Handle invalid ChirpStack webhook signature or payload
+- **WHEN** ChirpStack posts an unauthenticated or malformed webhook payload
+- **THEN** system rejects request with HTTP 401/400 error and logs an audit security warning
 
 ### Requirement: System SHALL emit asynchronous telemetry system events on ingestion
 The system SHALL publish a `TELEMETRY_RECEIVED` system event asynchronously via internal application event publisher after successfully persisting incoming telemetry readings, ensuring real-time notification without delaying HTTP/webhook ingestion responses.
@@ -82,5 +85,4 @@ The system SHALL publish a `TELEMETRY_RECEIVED` system event asynchronously via 
 #### Scenario: Publish telemetry received event after successful persistence
 - **WHEN** telemetry readings are successfully persisted for an edge node during uplink processing
 - **THEN** system publishes an asynchronous `TELEMETRY_RECEIVED` system event containing node ID, zone ID, reading counts, and timestamp
-
 

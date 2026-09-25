@@ -3,11 +3,9 @@
 ## Purpose
 
 Manages the lifecycle, state machine transitions, safety interlocks, and state transition history for AquaFlow irrigation commands across autonomous, manual, emergency, and downlink command workflows.
-
 ## Requirements
-
 ### Requirement: System SHALL model explicit irrigation command lifecycle state machine
-The system SHALL evaluate and enforce command execution lifecycle states (`ACCEPTED`, `QUEUED`, `DOWNLINK_TRANSMITTED`, `EDGE_ACKNOWLEDGED`, `EXECUTING`, `COMPLETED`, `FAILED`, `CANCELLED`, `OVERRIDDEN`) across autonomous decisions, manual commands, emergency stops, and downlink commands.
+The system SHALL evaluate and enforce command execution lifecycle states (`ACCEPTED`, `QUEUED`, `DOWNLINK_TRANSMITTED`, `EDGE_ACKNOWLEDGED`, `EXECUTING`, `COMPLETED`, `FAILED`, `CANCELLED`, `OVERRIDDEN`) across manual commands, emergency stops, and downlink commands while strictly requiring edge nodes to drive autonomous valve decisions.
 
 #### Scenario: Cloud command acceptance
 - **WHEN** an irrigation command is accepted by the cloud backend API

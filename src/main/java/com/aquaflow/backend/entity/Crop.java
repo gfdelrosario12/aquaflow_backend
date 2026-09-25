@@ -41,6 +41,23 @@ public class Crop {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public Double getWaterPerStage() { return waterPerStage; }
+    public void setWaterPerStage(Double waterPerStage) { this.waterPerStage = waterPerStage; }
+    public Integer getGrowingSeasonDays() { return growingSeasonDays; }
+    public void setGrowingSeasonDays(Integer growingSeasonDays) { this.growingSeasonDays = growingSeasonDays; }
+    public Double getOptimalTemperatureMin() { return optimalTemperatureMin; }
+    public void setOptimalTemperatureMin(Double optimalTemperatureMin) { this.optimalTemperatureMin = optimalTemperatureMin; }
+    public Double getOptimalTemperatureMax() { return optimalTemperatureMax; }
+    public void setOptimalTemperatureMax(Double optimalTemperatureMax) { this.optimalTemperatureMax = optimalTemperatureMax; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

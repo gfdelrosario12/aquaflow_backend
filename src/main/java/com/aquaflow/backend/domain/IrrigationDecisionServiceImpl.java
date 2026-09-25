@@ -101,17 +101,21 @@ public class IrrigationDecisionServiceImpl implements IrrigationDecisionService 
         IrrigationDecisionResponse response = DtoMapper.toIrrigationDecisionResponse(saved);
 
         if (stateMachine != null) {
-            String corrId = saved.getCorrelationId() != null ? saved.getCorrelationId() : "DECISION-" + saved.getId();
-            Long fieldId = (node.getMonitoringZone() != null && node.getMonitoringZone().getField() != null)
-                    ? node.getMonitoringZone().getField().getId() : null;
-            String triggerReasonStr = saved.getTriggerReason() != null ? saved.getTriggerReason().name() : null;
-            stateMachine.registerCommand(corrId, "AUTONOMOUS_DECISION", fieldId, node.getId(), "EDGE_NODE", triggerReasonStr);
-            if ("IN_PROGRESS".equalsIgnoreCase(saved.getExecutionStatus())) {
-                stateMachine.transitionState(corrId, com.aquaflow.backend.entity.CommandState.EXECUTING, "EDGE_NODE", "Execution in progress", null, null, null);
-            } else if ("COMPLETED".equalsIgnoreCase(saved.getExecutionStatus())) {
-                stateMachine.transitionState(corrId, com.aquaflow.backend.entity.CommandState.EDGE_ACKNOWLEDGED, "EDGE_NODE", "Edge acknowledged", null, null, null);
-                stateMachine.transitionState(corrId, com.aquaflow.backend.entity.CommandState.EXECUTING, "EDGE_NODE", "Executing decision", null, null, null);
-                stateMachine.transitionState(corrId, com.aquaflow.backend.entity.CommandState.COMPLETED, "EDGE_NODE", "Decision execution completed", null, null, null);
+            try {
+                String corrId = saved.getCorrelationId() != null ? saved.getCorrelationId() : "DECISION-" + saved.getId();
+                Long fieldId = (node.getMonitoringZone() != null && node.getMonitoringZone().getField() != null)
+                        ? node.getMonitoringZone().getField().getId() : null;
+                String triggerReasonStr = saved.getTriggerReason() != null ? saved.getTriggerReason().name() : null;
+                stateMachine.registerCommand(corrId, "AUTONOMOUS_DECISION", fieldId, node.getId(), "EDGE_NODE", triggerReasonStr);
+                if ("IN_PROGRESS".equalsIgnoreCase(saved.getExecutionStatus())) {
+                    stateMachine.transitionState(corrId, com.aquaflow.backend.entity.CommandState.EXECUTING, "EDGE_NODE", "Execution in progress", null, null, null);
+                } else if ("COMPLETED".equalsIgnoreCase(saved.getExecutionStatus())) {
+                    stateMachine.transitionState(corrId, com.aquaflow.backend.entity.CommandState.EDGE_ACKNOWLEDGED, "EDGE_NODE", "Edge acknowledged", null, null, null);
+                    stateMachine.transitionState(corrId, com.aquaflow.backend.entity.CommandState.EXECUTING, "EDGE_NODE", "Executing decision", null, null, null);
+                    stateMachine.transitionState(corrId, com.aquaflow.backend.entity.CommandState.COMPLETED, "EDGE_NODE", "Decision execution completed", null, null, null);
+                }
+            } catch (Exception e) {
+                log.warn("Failed to register decision state transition: {}", e.getMessage());
             }
         }
 

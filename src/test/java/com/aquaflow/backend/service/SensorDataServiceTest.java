@@ -1,7 +1,5 @@
 package com.aquaflow.backend.service;
 
-import com.aquaflow.backend.dto.request.SensorDataRequest;
-import com.aquaflow.backend.dto.response.SensorDataResponse;
 import com.aquaflow.backend.entity.SensorReading;
 import com.aquaflow.backend.entity.SensorType;
 import com.aquaflow.backend.persistence.SensorReadingRepository;

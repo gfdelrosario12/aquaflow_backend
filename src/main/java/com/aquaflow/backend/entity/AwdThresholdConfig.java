@@ -47,6 +47,23 @@ public class AwdThresholdConfig {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public AutoIrrigationConfig getAutoIrrigationConfig() { return autoIrrigationConfig; }
+    public void setAutoIrrigationConfig(AutoIrrigationConfig autoIrrigationConfig) { this.autoIrrigationConfig = autoIrrigationConfig; }
+    public CropGrowthStage getGrowthStage() { return growthStage; }
+    public void setGrowthStage(CropGrowthStage growthStage) { this.growthStage = growthStage; }
+    public Double getTriggerMoisturePercentage() { return triggerMoisturePercentage; }
+    public void setTriggerMoisturePercentage(Double triggerMoisturePercentage) { this.triggerMoisturePercentage = triggerMoisturePercentage; }
+    public Double getTargetMoisturePercentage() { return targetMoisturePercentage; }
+    public void setTargetMoisturePercentage(Double targetMoisturePercentage) { this.targetMoisturePercentage = targetMoisturePercentage; }
+    public Double getTargetFloodDepthCm() { return targetFloodDepthCm; }
+    public void setTargetFloodDepthCm(Double targetFloodDepthCm) { this.targetFloodDepthCm = targetFloodDepthCm; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

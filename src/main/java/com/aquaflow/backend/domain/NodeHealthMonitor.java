@@ -24,7 +24,6 @@ public class NodeHealthMonitor {
     private final EdgeNodeRepository edgeNodeRepository;
     private final SystemEventPublisher systemEventPublisher;
 
-    @Autowired
     public NodeHealthMonitor(EdgeNodeRepository edgeNodeRepository,
                              @Autowired(required = false) SystemEventPublisher systemEventPublisher) {
         this.edgeNodeRepository = edgeNodeRepository;

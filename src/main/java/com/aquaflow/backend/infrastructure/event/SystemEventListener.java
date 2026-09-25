@@ -17,7 +17,6 @@ public class SystemEventListener {
     private final RealtimeEventPublisherService realtimeEventPublisherService;
     private final AuditLogService auditLogService;
 
-    @Autowired
     public SystemEventListener(RealtimeEventPublisherService realtimeEventPublisherService,
                                @Autowired(required = false) AuditLogService auditLogService) {
         this.realtimeEventPublisherService = realtimeEventPublisherService;

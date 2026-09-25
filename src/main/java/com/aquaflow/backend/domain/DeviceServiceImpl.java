@@ -6,7 +6,6 @@ import com.aquaflow.backend.entity.Device;
 import com.aquaflow.backend.infrastructure.exception.ResourceNotFoundException;
 import com.aquaflow.backend.infrastructure.exception.ValidationException;
 import com.aquaflow.backend.persistence.DeviceRepository;
-import com.aquaflow.backend.domain.DeviceService;
 import com.aquaflow.backend.infrastructure.util.DtoMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

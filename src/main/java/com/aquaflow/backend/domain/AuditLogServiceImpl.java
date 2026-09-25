@@ -11,7 +11,6 @@ import com.aquaflow.backend.persistence.SystemAuditLogRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +31,6 @@ public class AuditLogServiceImpl implements AuditLogService {
     private final IrrigationAuditLogRepository irrigationAuditLogRepository;
     private final ObjectMapper objectMapper;
 
-    @Autowired
     public AuditLogServiceImpl(SystemAuditLogRepository systemAuditLogRepository,
                                IrrigationAuditLogRepository irrigationAuditLogRepository,
                                ObjectMapper objectMapper) {

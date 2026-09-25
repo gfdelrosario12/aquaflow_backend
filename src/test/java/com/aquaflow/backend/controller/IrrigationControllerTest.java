@@ -10,7 +10,6 @@ import com.aquaflow.backend.dto.response.CommandStatusResponse;
 import com.aquaflow.backend.entity.CommandLifecycleState;
 import com.aquaflow.backend.infrastructure.exception.GlobalExceptionHandler;
 import com.aquaflow.backend.infrastructure.exception.ResourceNotFoundException;
-import com.aquaflow.backend.infrastructure.exception.ValidationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

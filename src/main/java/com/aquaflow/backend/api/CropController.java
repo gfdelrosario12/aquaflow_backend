@@ -44,9 +44,10 @@ public class CropController {
         return ResponseEntity.ok(cropService.getAllCrops(pageable));
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<CropResponse>> getAllCropsList() {
         log.info("GET /api/v1/crops (all)");
+        log.info("GET /api/v1/crops/all");
         return ResponseEntity.ok(cropService.getAllCrops());
     }
 

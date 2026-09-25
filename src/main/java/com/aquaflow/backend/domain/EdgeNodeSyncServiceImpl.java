@@ -43,7 +43,6 @@ public class EdgeNodeSyncServiceImpl implements EdgeNodeSyncService {
     private final SystemEventPublisher systemEventPublisher;
     private final ObjectMapper objectMapper;
 
-    @Autowired
     public EdgeNodeSyncServiceImpl(ConfigSyncTaskRepository syncTaskRepository,
                                    EdgeNodeRepository edgeNodeRepository,
                                    AutoIrrigationConfigRepository autoIrrigationConfigRepository,
